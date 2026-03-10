@@ -1,0 +1,25 @@
+{% load i18n characters_extras rules_extras thumbnail static %}
+
+<div class="row">
+  <div class="col-12">
+    <div class="input-group">
+      <div class="form-floating mb-3">
+        <input type="text"
+               name="q"
+               hx-get="{% url 'worlds:xhr_search_links' world_slug=object.world.slug %}"
+               hx-trigger="keyup changed delay:500ms"
+               hx-target=".wiki-links-search-target"
+               autocomplete="off"
+               class="form-control"
+               placeholder="{% trans 'Search' %}">
+        <label for="search-wiki-pages">{% trans 'Search' %}</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12 wiki-links-search-target">
+    {% include 'worlds/sidebar/_search_links.html' with pages=object.world.wikipage_set.all %}
+  </div>
+</div>

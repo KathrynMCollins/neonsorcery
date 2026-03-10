@@ -1,0 +1,111 @@
+{% load i18n characters_extras rules_extras thumbnail static %}
+
+<script>
+  $(function () {
+    $('.additional-images-container').on('click', '.additional-image', function (e) {
+      const elem = $(this);
+
+      let orig_text = elem.find('.card-header').text()
+      copyTextToClipboard(elem.data('wiki-link'))
+
+      elem.find('.card-header').text(elem.data('msg'))
+      setTimeout(() => elem.find('.card-header').text(orig_text), 2000)
+
+      e.preventDefault()
+      return false
+    })
+  })
+</script>
+
+<div class="row">
+  <div class="col-12">
+    <button
+      data-bs-toggle="collapse"
+      data-bs-target="#upload-collapse"
+      class="btn btn-primary w-100">{% trans 'Upload page image' %}</button>
+  </div>
+  <div class="col-12 mb-4 collapse pt-2" id="upload-collapse">
+    <div class="card">
+      <div class="card-body">
+        <form action="{% url 'worlds:xhr_upload_image' slug=object.slug kind="page_image" %}"
+              class="form-control"
+              method="post"
+              enctype="multipart/form-data"
+              data-fetch-form-event-after="sidebar-right-refresh"
+              data-fetch-form="true">
+          <input type="file" name="file" class="mb-1">
+          <input class="form-control mb-1" type="text" name="caption" placeholder="{% trans 'Caption' %}"
+                 value="{{ object.name }}">
+          <input class="form-control mb-1" type="text" name="copyright" placeholder="{% trans 'Copyright' %}"
+                 value="{{ image_copyright_default|default_if_none:"" }}">
+          <input class="form-control mb-1" type="text" name="copyright-url"
+                 value="{{ image_copyright_url_default|default_if_none:"" }}"
+                 placeholder="{% trans 'Copyright URL' %}">
+          <button class="btn btn-primary w-100 mt-1">{% trans 'Upload' %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <button data-bs-toggle="collapse"
+            data-bs-target="#additional-upload-collapse"
+            id="upload-collapse-button"
+            class="btn btn-primary mt-1 mb-2 w-100">{% trans 'Upload an additional image' %}</button>
+  </div>
+  <div class="col-12 collapse pt-2" id="additional-upload-collapse">
+    <div class="card">
+      <div class="card-body">
+        <form action="{% url 'worlds:xhr_upload_image' slug=object.slug kind="additional_image" %}"
+              class="form-control"
+              method="post"
+              enctype="multipart/form-data"
+              data-fetch-form-event-after="sidebar-right-refresh"
+              data-fetch-form="true">
+          <input type="file" name="file" class="mb-1">
+          <input class="form-control mb-1" type="text" name="caption" placeholder="{% trans 'Caption' %}"
+                 value="{{ object.name }}">
+          <input class="form-control mb-1" type="text" name="copyright" placeholder="{% trans 'Copyright' %}"
+                 value="{{ image_copyright_default|default_if_none:"" }}">
+          <input class="form-control mb-1" type="text" name="copyright-url"
+                 value="{{ image_copyright_url_default|default_if_none:"" }}"
+                 placeholder="{% trans 'Copyright URL' %}">
+          <button class="btn btn-primary w-100 mt-1">{% trans 'Upload' %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    {% if object.image %}
+      <div class="card">
+        <div class="card-header">{% trans "Page image" %}</div>
+        {% thumbnail object.image "300x300" as im %}
+          <img class="card-img-top" src="{{ im.url }}" alt="{{ object.title }}"/>
+        {% endthumbnail %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    {% for image in object.wikipageimage_set.all %}
+      <div class="card mt-3 pointer"
+           data-clipboard-value="{{ image.get_wiki_tag }}"
+           data-clipboard-title="{% trans 'Wiki tag copied' %}"
+           data-clipboard-message="{% trans "Paste the wiki tag somewhere into the text" %}">
+        <div class="card-header">
+          {{ image.caption }}
+        </div>
+        {% if image.image %}
+          {% thumbnail image.image "300x300" as im %}
+            <img class="card-img-top" src="{{ im.url }}" alt="{{ image.caption }}"/>
+          {% endthumbnail %}
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
