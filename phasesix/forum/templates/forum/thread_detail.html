@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load portal_extras %}
+{% load i18n django_bootstrap5 rules_extras static thumbnail %}
+
+{% block title %}{{ thread }} - {{ thread.board }} - Forum - {{ block.super }}{% endblock %}
+
+{% block in_page_title %}{{ thread }}{% endblock %}
+{% block in_page_subtitle %}{{ thread.board }}{% endblock %}
+
+{% block opengraph %}
+  {% include "shared/opengraph.html" with og_title=thread og_description=thread.earliest_post.text|default:brand_description|striptags|truncatechars:200 %}
+{% endblock %}
+
+{% block bottom_nav %}
+  {% bottom_navigation_button "forum/_thread_navigation.html" %}
+{% endblock %}
+
+{% block content %}
+  <div data-app="forum" class="row">
+    <div class="col-12 col-xl-3 d-none d-xl-block">
+      {% include 'forum/_thread_navigation.html' %}
+    </div>
+
+    <div class="col-12 col-xl-9">
+      {% for post in object.post_set.all %}
+        <div class="card mb-4">
+          <div class="card-header">
+            {% latest_user_image post.created_by as image %}
+            {% if image %}
+              {% thumbnail image "28x28" as im %}
+                <img class="rounded-circle me-1"
+                     style="width: 28px; height: 28px"
+                     src="{{ im.url }}"
+                     alt="{{ post.created_by }}">
+              {% endthumbnail %}
+            {% endif %}
+            {% blocktrans with t_created_by=post.created_by t_timesince=post.created_at|timesince %}
+              <b>{{ t_created_by }}</b> <span class="text-muted small">{{ t_timesince }} ago</span>
+            {% endblocktrans %}
+          </div>
+          <div class="card-body forum-post">
+            <div class="forum-post-text">
+              {{ post.text|phasesix_markup|urlize }}
+            </div>
+            {% if user.is_authenticated %}
+              <button data-raw-post-url="{% url 'forum:post_raw' post.id %}"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#new-thread-collapse"
+                      class="btn btn-primary btn-sm ms-2 float-end quote-button">{% trans 'Quote' %}</button>
+              <button data-bs-toggle="collapse"
+                      data-bs-target="#new-thread-collapse"
+                      class="btn btn-primary btn-sm ms-2 float-end">{% trans 'Answer' %}</button>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if user.is_authenticated %}
+        <div class="collapse card" id="new-thread-collapse">
+          <div class="card-body">
+            <form action="" class="forum-form" data-image-upload-url="{% url "forum:xhr_upload_image" %}" method="post"
+                  enctype="multipart/form-data">
+              {% csrf_token %}
+              {% bootstrap_form form %}
+              <input type="file" id="forumUploadFileInput" accept="image/*" style="display: none;"/>
+              <div class="btn-group" role="group">
+                <button type="submit"
+                        class="btn btn-primary mb-2 mt-2">{% trans 'Answer Thread' %}</button>
+                <button type="button" class="btn btn-secondary mb-2 mt-2"
+                        id="forum-upload-image">{% trans "Upload Image" %}</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

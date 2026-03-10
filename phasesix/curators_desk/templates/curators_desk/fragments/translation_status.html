@@ -1,0 +1,61 @@
+{% load curators_desk_extras %}
+{% load i18n rules_extras %}
+
+<div class="modal" tabindex="-1" id="info-modal">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Templates</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Loading.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="list-group" id="model-list-tab" role="tablist">
+      {% for model in translation_models %}
+        <a class="list-group-item list-group-item-action {% if forloop.first %}active{% endif %}"
+           id="{{ model.id }}-list-tab"
+           data-bs-toggle="list"
+           href="#{{ model.id }}-tab-pane"
+           role="tab"
+           aria-controls="{{ model.id }}-tab-pane">{{ model.name|capfirst }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="tab-content">
+      {% for model in translation_models %}
+        <div class="tab-pane fade {% if forloop.first %} show active{% endif %}"
+             id="{{ model.id }}-tab-pane"
+             role="tabpanel"
+             aria-labelledby="{{ model.id }}-list-tab"
+             tabindex="0">
+          <div class="row">
+            {% for object in model.qs|objects_with_missing_translations:model.translatable_fields %}
+              <div class="col-12 small">
+                {% url model.admin_url_name object_id=object.id as admin_url %}
+                {% if admin_url %}
+                  <a href="{{ admin_url }}">{{ object }}</a>
+                {% else %}
+                  {{ object }}
+                {% endif %}
+                {% for field in model.translatable_fields %}
+                  {% translation_field_badge object field %}
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

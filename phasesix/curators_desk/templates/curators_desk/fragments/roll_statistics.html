@@ -1,0 +1,14 @@
+{% load curators_desk_extras %}
+{% load i18n %}
+<div class="row">
+  {% for object in object_list %}
+    <div class="col">
+      <h3>{{ object.title }}</h3>
+      {% for element in object.elements|dictsortreversed:"roll_count" %}
+        <div class="{% roll_amount_color_class element.roll_count %}">
+          {{ element.object }} {{ element.roll_count }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>

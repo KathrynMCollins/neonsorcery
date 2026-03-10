@@ -1,0 +1,68 @@
+{% load i18n characters_extras %}
+
+<div class="btn-group mb-3" role="group" aria-label="{% trans "Grid type selection" %}">
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='template' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Template Grid' %}</button>
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='lineage' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Lineage Grid' %}</button>
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='skill' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Skill Grid' %}</button>
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='item' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Item Grid' %}</button>
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='weapon' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Weapon Grid' %}</button>
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='weaponmodification' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Weapon Mod Grid' %}</button>
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='riotgear' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Riot Gear Grid' %}</button>
+  <button class="btn btn-primary"
+          hx-get="{% url 'curators_desk:extension_grid' type='foe' %}"
+          hx-target="#v-extension-grid > div">{% trans 'Foe Grid' %}</button>
+</div>
+
+<div class="table-responsive tableFixHead" style="height: 75vh; max-height: 75vh;">
+  <table class="table table-bordered table-hover-tr">
+    <thead>
+    <tr>
+      <th class="bg-dark text-white"
+          style="position: sticky; left: 0; z-index: 3;">{% trans 'Template' %}</th>
+      {% for e in extensions %}
+        <th class="bg-dark">{{ e.name }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for t in object_list %}
+      <tr>
+        <td class="text-white"
+            style="position: sticky; left: 0; z-index: 2; background-color: var(--bs-dark);">
+          <a href="{% url admin_url object_id=t.id %}">
+            {{ t }}
+          </a>
+        </td>
+        {% for e in extensions %}
+          <td class="{{ e.is_epoch|yesno:",bg-dark" }}">
+            <a class="pointer"
+               hx-post="{% url 'curators_desk:extension_grid' type=type %}"
+               hx-vals='{"object": "{{ t.id }}", "extension": "{{ e.id }}"}'
+               hx-swap="innerHTML">
+              {% if e.id in t.extension_ids %}
+                <i class="fas fa-check text-success"></i>
+              {% else %}
+                <i class="fas fa-times text-danger"></i>
+              {% endif %}
+            </a>
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
