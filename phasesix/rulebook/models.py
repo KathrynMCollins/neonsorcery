@@ -247,5 +247,10 @@ class Chapter(
 
     @property
     def text(self):
-        with open(self.rules_file.path) as f:
-            return f.read()
+        if not self.rules_file:
+            return ""
+        try:
+            with open(self.rules_file.path) as f:
+                return f.read()
+        except FileNotFoundError:
+            return ""

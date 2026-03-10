@@ -33,7 +33,7 @@ urlpatterns = [
         name="create_epoch",
     ),
     path(
-        "new/<int:world_pk>/<int:epoch_pk>)/",
+        "new/<int:world_pk>/<int:epoch_pk>/",
         views.CreateCampaignExtensionsView.as_view(),
         name="create_extensions",
     ),
