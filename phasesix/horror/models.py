@@ -1,12 +1,21 @@
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from transmeta import TransMeta
 
 from armory.mixins import SearchableCardListMixin
 from homebrew.models import HomebrewModel, HomebrewQuerySet
 from phasesix.models import PhaseSixModel
-from rules.models import ModifierBase, modifiers_for_qs
+from rules.models import Extension, ModifierBase, modifiers_for_qs
 from rules.models import Skill, Attribute, Knowledge
+
+
+class QuirkQuerySet(HomebrewQuerySet):
+    def for_extensions(self, extension_qs):
+        return self.filter(
+            Q(extensions__id__in=extension_qs.all())
+            | Q(extensions__id__in=Extension.objects.filter(is_mandatory=True))
+        )
 
 
 class QuirkCategory(SearchableCardListMixin, models.Model, metaclass=TransMeta):
@@ -22,7 +31,8 @@ class QuirkCategory(SearchableCardListMixin, models.Model, metaclass=TransMeta):
         return self.name
 
     def child_item_qs(self, extension_qs=None):
-        # TODO: Implement extensions on quirks
+        if extension_qs is not None:
+            return self.quirk_set.for_extensions(extension_qs).distinct()
         return self.quirk_set.distinct()
 
     def as_dict(self, extension_qs=None):
@@ -35,7 +45,9 @@ class QuirkCategory(SearchableCardListMixin, models.Model, metaclass=TransMeta):
 
 
 class Quirk(HomebrewModel, PhaseSixModel, metaclass=TransMeta):
-    objects = HomebrewQuerySet.as_manager()
+    objects = QuirkQuerySet.as_manager()
+
+    extensions = models.ManyToManyField("rules.Extension", blank=True)
 
     name = models.CharField(_("name"), max_length=60)
     category = models.ForeignKey(

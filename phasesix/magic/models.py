@@ -1,11 +1,29 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from transmeta import TransMeta
 
 from armory.mixins import SearchableCardListMixin
 from homebrew.models import HomebrewModel, HomebrewQuerySet
 from phasesix.models import ModelWithImage, PhaseSixModel
+from rules.models import Extension
+
+
+class BaseSpellQuerySet(HomebrewQuerySet):
+    def for_extensions(self, extension_qs):
+        return self.filter(
+            Q(extensions__id__in=extension_qs.all())
+            | Q(extensions__id__in=Extension.objects.filter(is_mandatory=True))
+        )
+
+
+class SpellTemplateQuerySet(models.QuerySet):
+    def for_extensions(self, extension_qs):
+        return self.filter(
+            Q(extensions__id__in=extension_qs.all())
+            | Q(extensions__id__in=Extension.objects.filter(is_mandatory=True))
+        )
 
 SPELL_ATTRIBUTE_CHOICES = (
     ("power", _("Power")),
@@ -81,7 +99,8 @@ class SpellOrigin(SearchableCardListMixin, ModelWithImage, metaclass=TransMeta):
         return self.name
 
     def child_item_qs(self, extension_qs=None):
-        # TODO: Implement extensions on basespells
+        if extension_qs is not None:
+            return self.basespell_set.for_extensions(extension_qs).distinct()
         return self.basespell_set.distinct()
 
     def as_dict(self, extension_qs=None):
@@ -98,7 +117,9 @@ class SpellOrigin(SearchableCardListMixin, ModelWithImage, metaclass=TransMeta):
 
 
 class BaseSpell(HomebrewModel, PhaseSixModel, metaclass=TransMeta):
-    objects = HomebrewQuerySet.as_manager()
+    objects = BaseSpellQuerySet.as_manager()
+
+    extensions = models.ManyToManyField("rules.Extension", blank=True)
     DURATION_UNITS = (
         ("actions", _("actions")),
         ("rounds", _("rounds")),
@@ -229,7 +250,8 @@ class SpellTemplateCategory(models.Model, metaclass=TransMeta):
         return self.name
 
     def child_item_qs(self, extension_qs=None):
-        # TODO: Implement extensions on spelltemplates
+        if extension_qs is not None:
+            return self.spelltemplate_set.for_extensions(extension_qs).distinct()
         return self.spelltemplate_set.distinct()
 
     def as_dict(self, extension_qs=None):
@@ -242,8 +264,11 @@ class SpellTemplateCategory(models.Model, metaclass=TransMeta):
 
 
 class SpellTemplate(PhaseSixModel, metaclass=TransMeta):
+    objects = SpellTemplateQuerySet.as_manager()
+
     name = models.CharField(_("name"), max_length=120)
     category = models.ForeignKey(SpellTemplateCategory, on_delete=models.CASCADE)
+    extensions = models.ManyToManyField("rules.Extension", blank=True)
 
     spell_point_cost = models.IntegerField(
         verbose_name=_("spell point cost"), default=1

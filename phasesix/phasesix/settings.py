@@ -279,7 +279,7 @@ UNFOLD = {
     "SITE_TITLE": "Phase Six",
     "SITE_HEADER": "Phase Six",
     "SITE_ICON": {
-        "light": "/static/img/phsaesix_logo_2.png",
+        "light": "/static/img/phasesix_logo_2.png",
         "dark": "/static/img/phasesix_logo_2.png",
     },
     "SIDEBAR": {

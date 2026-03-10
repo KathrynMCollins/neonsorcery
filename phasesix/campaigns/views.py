@@ -410,7 +410,7 @@ class XhrSettingsSidebarView(BaseSidebarView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = SettingsForm(instance=self.object)
+        context["form"] = CampaignSettingsGameForm(instance=self.object)
         return context
 
 
@@ -571,7 +571,7 @@ class XhrCampaignToggleFavoriteView(View):
     def post(self, request, *args, **kwargs):
         campaign = get_object_or_404(Campaign, pk=kwargs["pk"])
         if not campaign.may_edit(request.user):
-            raise PermissionDenied
+            raise PermissionDenied()
 
         campaign.is_favorite = not campaign.is_favorite
         campaign.save()

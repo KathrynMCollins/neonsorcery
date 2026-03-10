@@ -54,8 +54,11 @@ class DumpApiView(ApiKeyView):
         qs = model_map[kwargs["model"]].objects.all()
 
         world_name = request.GET.get("world", None)
-        if world_name is not None and world_name in ["nexus", "tirakan"]:
-            extensions = Extension.objects.for_world_identifier(world_name)
+        if world_name is not None:
+            try:
+                extensions = Extension.objects.for_world_identifier(world_name)
+            except World.DoesNotExist:
+                extensions = Extension.objects.exclude(type="w")
         else:
             extensions = Extension.objects.exclude(type="w")
         return JsonResponse(
