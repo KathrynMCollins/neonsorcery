@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load rules_extras %}
+{% load django_bootstrap5 %}
+{% load characters_extras %}
+{% load campaign_extras %}
+{% load portal_extras %}
+{% load thumbnail %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ object.user.username|capfirst }} - {{ block.super }}{% endblock %}
+{% block in_page_title %}{{ object.user.username|capfirst }}{% endblock %}
+{% block in_page_subtitle %}
+  {% if object.bio %}{{ object.bio|phasesix_markup }}{% endif %}
+  <small>
+    {% trans "Member since" %} {{ object.user.date_joined|date:"Y" }}
+  </small>
+{% endblock %}
+
+{% block opengraph %}
+  {% latest_user_image object.user as image %}
+  {% if image %}
+    {% thumbnail image "600x600" as im %}
+      {% include "shared/opengraph.html" with og_title=object.user.username|capfirst og_description=object.bio|default:brand_description|striptags|truncatechars:200 og_image_path=im.url %}
+    {% endthumbnail %}
+  {% else %}
+    {% include "shared/opengraph.html" with og_title=object.user.username|capfirst og_description=object.bio|default:brand_description|striptags|truncatechars:200 %}
+  {% endif %}
+{% endblock %}
+
+{% block bottom_nav %}
+  {% bottom_navigation_button "portal/_navigation.html" %}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-12 col-xl-3 d-none d-xl-block">
+      {% include "portal/_navigation.html" with object=object %}
+    </div>
+
+    <div class="col-12 col-xl-9">
+      <div class="tab-content">
+
+        <div class="tab-pane fade show active" id="characters-tab-pane" role="tabpanel" tabindex="0">
+          <div class="row character-list">
+
+            {% if may_edit %}
+              <div class="col-12 col-sm-6 col-md-4 mb-3">
+                {% create_character_url as create_url %}
+                <a href="{{ create_url }}">
+                  <div class="card d-flex justify-content-center align-items-center mb-2 h-100">
+                    <i class="fas fa-plus fa-2x"></i>
+                    <span class="invite-text">{% trans "Create Character" %}</span>
+                  </div>
+                </a>
+              </div>
+            {% endif %}
+
+            {% for character in object.user.character_set.pc|for_world:request.world %}
+              <div class="col-12 col-sm-6 col-md-4 mb-3">
+                {% include 'characters/_character_list_widget.html' with character=character %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="npc-tab-pane" role="tabpanel" tabindex="0">
+          <div class="row character-list">
+            {% for character in object.user.character_set.npc|for_world:request.world %}
+              <div class="col-12 col-sm-6 col-md-4 mb-3">
+                {% include 'characters/_character_list_widget.html' with character=character %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="gm-campaigns-tab-pane" role="tabpanel" tabindex="0">
+          <div class="row campaign-list">
+
+            {% if may_edit %}
+              {% create_campaign_url as create_url %}
+              <div class="col-12 col-md-6 mb-3">
+                <a href="{{ create_url }}">
+                  <div class="card d-flex justify-content-center align-items-center mb-2 h-100">
+                    <i class="fas fa-plus fa-2x"></i>
+                    <span class="invite-text">{% trans "Create Campaign" %}</span>
+                  </div>
+                </a>
+              </div>
+            {% endif %}
+
+            {% for campaign in object.user.campaign_set.all|for_world:request.world %}
+              <div class="col-12 col-md-6 mb-3">
+                {% include 'campaigns/_campaign_list_widget.html' with campaign=campaign %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="settings-tab-pane" role="tabpanel" tabindex="0">
+          <div class="row">
+            <div class="card mb-4">
+              <div class="card-body py-4">
+                <h3 class="mb-2">{% trans "Profile Settings" %}</h3>
+                <form method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+
+                  {% bootstrap_form form layout="floating" %}
+
+                  <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">{% trans "Save Settings" %}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="more-tab-pane" role="tabpanel" tabindex="0">
+          <div class="row">
+
+            <div class="col-12 col-md-6 mb-3">
+              <a href="{% url "portal:wrapup" pk=object.user.id year=2025 %}" class="no-decoration">
+                <div class="position-relative profile-cta">
+                  <div class="ratio ratio-16x9">
+                    <img src="{% static "img/wrapup_2025.png" %}" alt="wrapup"
+                         class="rounded object-fit-cover">
+                  </div>
+                  <div class="profile-cta-text w-100 p-2">{% trans "2025 WrapUp" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6 mb-3">
+              <a href="{% url "portal:wrapup" pk=object.user.id year=2024 %}" class="no-decoration">
+                <div class="position-relative profile-cta">
+                  <div class="ratio ratio-16x9">
+                    <img src="{% static "img/profile_cta_images/profile_wrapup_2024.png" %}" alt="wrapup"
+                         class="rounded object-fit-cover">
+                  </div>
+                  <div class="profile-cta-text w-100 p-2">{% trans "2024 WrapUp" %}</div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6 mb-3">
+              <a href="{% url "portal:wrapup" pk=object.user.id year=2023 %}" class="no-decoration">
+                <div class="position-relative profile-cta">
+                  <div class="ratio ratio-16x9">
+                    <img src="{% static "img/profile_cta_images/profile_wrapup_2023.png" %}" alt="wrapup"
+                         class="rounded object-fit-cover">
+                  </div>
+                  <div class="profile-cta-text w-100 p-2">{% trans "2023 WrapUp" %}</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

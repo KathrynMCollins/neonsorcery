@@ -1,0 +1,33 @@
+{% load django_bootstrap5 i18n %}
+
+<form action="{{ post_url }}"
+      data-fetch-form="true"
+      data-fetch-form-close="all"
+      method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% bootstrap_form_errors form %}
+  <div class="row g-3">
+    <div class="col-12">
+      {% bootstrap_field form.name layout="floating" %}
+    </div>
+    <div class="col-12 col-lg-6">
+      {% bootstrap_field form.gm_notes layout="floating" %}
+    </div>
+    <div class="col-12 col-lg-6">
+      {% bootstrap_field form.player_summary layout="floating" %}
+    </div>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <button type="submit"
+            class="btn btn-primary">{% trans "Save" %}</button>
+    {% if delete_url %}
+      <button type="button"
+              class="btn btn-outline-danger"
+              data-action-trigger-url="{{ delete_url }}"
+              data-action-trigger-confirm="{% trans "Delete this plot element?" %}"
+              data-action-trigger-event-after="refresh-plot,modal-hide">
+        {% trans "Delete" %}
+      </button>
+    {% endif %}
+  </div>
+</form>
