@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load portal_extras %}
+{% load i18n thumbnail static rules_extras campaign_extras %}
+
+{% block title %}{{ object }} - {{ block.super }}{% endblock %}
+{% block in_page_title %}{{ object }}{% endblock %}
+{% block in_page_subtitle %}{% trans 'A campaign by' %} {{ object.created_by }}{% endblock %}
+
+{% block opengraph %}
+  {% image_url object as image %}
+  {% include "shared/opengraph.html" with og_title=object og_description=object.description|default:object|default:brand_description|striptags|truncatechars:200 og_image_path=image %}
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'js/campaign_socket.js' %}"></script>
+  {% if object.plot %}
+    <script src="{% static 'campaigns/js/campaign_plot.js' %}"></script>
+  {% endif %}
+{% endblock %}
+
+{% block bottom_nav %}
+  {% bottom_navigation_button "campaigns/_navigation.html" %}
+{% endblock %}
+
+{% block content %}
+  <div id="dice-log-toggle"
+       class="btn btn-outline-primary d-flex align-items-center"
+       hx-get="{% url 'campaigns:xhr_dice_log' pk=object.id %}"
+       hx-target="#dice-log-entries"
+       onclick="toggleDiceLog()">
+    <i class="gi gi-delapouite-dice-six-faces-five me-2"></i>
+    {% trans "Dice Log" %}
+  </div>
+
+  <div id="dice-log" class="card shadow-sm mb-4">
+    <div id="dice-log-entries" class="card-body"></div>
+  </div>
+
+  <div class="d-none" id="room-url">{% ws_room_url object.ws_room_name %}</div>
+  <audio class="d-none" id="room-audio" src="{% static 'roll.mp3' %}"></audio>
+
+  <div data-app="campaigns" class="row mt-4">
+    <div class="col-12 col-xl-3 d-none d-xl-block">
+      {% include 'campaigns/_navigation.html' with object=object may_edit=may_edit %}
+    </div>
+
+    <div class="col-12 col-xl-9">
+      <div class="tab-content">
+        <div class="tab-pane fade active show" id="v-overview" role="tabpanel">
+          {% if may_join %}
+            <div class="card mb-4">
+              <div class="card-body py-3">
+                <div class="d-flex align-items-center justify-content-start gap-3">
+                  <i class="gi gi-cathelineau-swordwoman fs-1"></i>
+                  <div>
+                    {% trans "You have been invited to join this campaign. Create a new character to join the campaign." %}<br>
+                    <a href=""
+                       data-sidebar-right-title="{% trans 'Join campaign' %}"
+                       data-sidebar-right-url="{% url 'campaigns:xhr_sidebar' pk=object.id sidebar_template="join" %}"
+                       class="btn btn-success mt-2"><i
+                      class="fas fa-dice-five"></i> {% trans 'Join campaign' %}</a>
+                  </div>
+                </div>
+                <br>
+              </div>
+            </div>
+          {% endif %}
+
+          <div
+            hx-trigger="intersect,refresh-fragments from:document,refresh-campaign-dramaturgy from:document"
+            hx-get="{% url 'campaigns:xhr_campaign_fragment' pk=object.id fragment_template="dramaturgy" %}">
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="v-homebrew" role="tabpanel">
+          <div
+            hx-trigger="intersect,refresh-fragments from:document,refresh-campaign-homebrew from:document"
+            hx-get="{% url 'campaigns:xhr_campaign_fragment' pk=object.id fragment_template="homebrew" %}">
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="v-statistics" role="tabpanel">
+          <div
+            hx-trigger="intersect,refresh-fragments from:document,refresh-campaign-statistics from:document"
+            hx-get="{% url 'campaigns:xhr_campaign_fragment' pk=object.id fragment_template="statistics" %}">
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="v-settings" role="tabpanel">
+          <div
+            hx-trigger="intersect,refresh-fragments from:document,refresh-campaign-settings from:document"
+            hx-get="{% url 'campaigns:xhr_campaign_fragment' pk=object.id fragment_template="settings" %}">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
