@@ -1,0 +1,26 @@
+{% load rulebook_extras %}
+{% load thumbnail %}
+{% load characters_extras %}
+{% load i18n %}
+{% load portal_extras %}
+<div class="list-group">
+
+  <a href="{% url "rulebook:download" %}"
+     class="btn btn-primary btn-lg mb-3 w-100" type="button"
+     aria-expanded="false">
+    {% trans 'Download PDF' %}
+  </a>
+
+  {% for chapter in chapters %}
+    <a
+      class="{% if chapter.id == object.id %}active{% endif %} navigation-link pointer py-3 list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+      href="{% url 'rulebook:detail' pk=chapter.id %}"
+      aria-current="{% if chapter.id == object.id %}true{% else %}false{% endif %}">
+      <div class="d-flex justify-content-center align-items-center">
+        <i
+          class="{{ chapter.fa_icon_class|default:"fas fa-book" }} fa-fw {% if chapter == object %}text-light{% else %}text-primary{% endif %}"></i>
+        <span class="ms-3 d-block d-lg-block">{{ chapter.name }}</span>
+      </div>
+    </a>
+  {% endfor %}
+</div>

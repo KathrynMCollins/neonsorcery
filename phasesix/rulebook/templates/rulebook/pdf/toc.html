@@ -1,0 +1,69 @@
+{% load bootyprint %}
+{% load rulebook_extras %}
+{% load i18n %}
+<html lang="de">
+<head>
+  <title>{{ world_book.book_title }}</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" type="text/css"
+        rel="stylesheet"/>
+
+  {% bootyprint_css %}
+  <style>
+    {% font_kits %}
+    :root {
+      --page-size: A4;
+      --page-margin: 14mm;
+      --font-size-base: 12px;
+      --font-family-headings: '{{ world_book.book_heading_font }}';
+      --font-family-base: '{{ world_book.book_body_font }}';
+    }
+
+    .chapter-image {
+      position: relative;
+      height: 10cm;
+      width: 21cm;
+      margin: -14mm -14mm 1cm -14mm; /* Chapters start always on the right page */
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    {% if variant == 'print' %}
+      @page :left {
+        margin: 20mm 30mm 20mm 20mm;
+      }
+
+      @page :right {
+        margin: 20mm 20mm 20mm 30mm;
+      }
+
+      .chapter-image {
+        margin: -2cm -2cm 1cm -3cm !important; /* Chapters start always on the right page */
+      }
+    {% endif %}
+
+  </style>
+</head>
+
+<body>
+<div class="chapter" id="toc">
+  <div class="chapter-image" style="background-image: url(file://{% local_static "rulebook/toc_cover.png" %})">
+    &nbsp;
+  </div>
+  <h2>{% trans 'Table of contents' %}</h2>
+  <div class="columns-2 gap-4">
+    {% create_toc_entries bookmark_tree as toc_entries %}
+    {% for toc_entry in toc_entries %}
+      <span style="margin-left: {{ toc_entry.indent }}mm">
+          {{ toc_entry.label }}
+        </span>
+      <span style="float: right">
+          {{ toc_entry.page }}
+        </span>
+      <br>
+    {% endfor %}
+  </div>
+</div>
+
+</body>

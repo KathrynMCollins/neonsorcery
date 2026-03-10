@@ -1,0 +1,23 @@
+{% extends "rulebook/pdf/appendix/appendix_base.html" %}
+{% load rules_extras %}
+
+{% block content %}
+  {% regroup object_list by category as category_list %}
+
+  {% for category in category_list %}
+    <h3>{{ category.grouper }}</h3>
+
+    {% for quirk in category.list %}
+      <div class="page-break-avoid">
+        <h4>{{ quirk }}</h4>
+        <div class="mb-3 text-success">
+          {{ quirk.positive_effects|phasesix_markup }}
+        </div>
+        <div class="mb-3 text-danger">
+          {{ quirk.negative_effects|phasesix_markup }}
+        </div>
+        {% modifier_widget quirk.quirkmodifier_set.all %}
+      </div>
+    {% endfor %}
+  {% endfor %}
+{% endblock %}
