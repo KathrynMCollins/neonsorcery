@@ -1,0 +1,46 @@
+{% load portal_extras %}
+{% load i18n characters_extras rules_extras %}
+<div class="card mb-3 foe-card">
+  <div class="card-header bg-dark text-white">
+    <h4 class="mb-0 d-flex justify-content-between align-items-center">
+      <span>{{ foe }}</span>
+      <span class="badge bg-secondary">{{ foe.type }}</span>
+    </h4>
+  </div>
+
+  {% if foe.image %}
+    <img src="{% image_url foe "400x400" crop="center" %}" alt="{{ foe.name }}" class="card-img-top">
+  {% else %}
+    <div class="card-img-placeholder bg-light d-flex justify-content-center align-items-center" style="height: 200px;">
+      <i class="fas fa-question-circle fa-3x text-muted"></i>
+    </div>
+  {% endif %}
+
+  <div class="card-body position-relative">
+    {% include "homebrew/_made_by_label.html" with creator=foe.created_by extra_class="mb-2" %}
+    {% include "rules/_foe_stat_block.html" with show_description=True %}
+    {% include "rules/_foe_actions_block.html" %}
+
+    {% if character and add_button %}
+      <form action="{% url 'characters:xhr_character_objects' pk=character.id object_type="foe" %}"
+            data-fetch-form="true"
+            class="float-end"
+            method="post">
+        {% csrf_token %}
+        <input type="hidden" name="object_id" value="{{ foe.id }}">
+        <input type="hidden" name="action" value="add">
+        <button class="btn btn-sm btn-primary m-2"
+                type="submit"
+                data-danger="{% trans 'Not possible' %}"
+                data-success="{% trans 'Added' %}">
+          {% trans 'Add' %}
+        </button>
+      </form>
+    {% endif %}
+
+    {% if user.is_superuser %}
+      <a href="{% url 'admin:rules_foe_change' foe.id %}"
+         style="position: absolute; bottom: 2px; right: 2px; font-size: xx-small">admin</a>
+    {% endif %}
+  </div>
+</div>
