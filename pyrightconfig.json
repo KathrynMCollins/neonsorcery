@@ -1,0 +1,38 @@
+{
+  "include": [
+    "phasesix/"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/migrations",
+    "**/vendor"
+  ],
+  "defineConstant": {
+    "DEBUG": true
+  },
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "extraPaths": [
+        "phasesix"
+      ]
+    }
+  ],
+  "venv": ".venv",
+  "reportAny": false,
+  "analyzeUnannotatedFunctions": false,
+  "reportAttributeAccessIssue": false,
+  "reportImplicitOverride": false,
+  "reportIncompatibleMethodOverride": false,
+  "reportMissingImports": true,
+  "reportMissingParameterType": false,
+  "reportMissingTypeStubs": false,
+  "reportUnannotatedClassAttribute": false,
+  "reportUnknownArgumentType": false,
+  "reportUnknownParameterType": false,
+  "reportUnknownMemberType": false,
+  "reportUnknownVariableType": false,
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Linux"
+}

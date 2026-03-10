@@ -1,0 +1,40 @@
+volumes:
+  postgres-data:
+  media-files:
+  static-files:
+
+services:
+  redis:
+    image: redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  db:
+    image: postgres
+    volumes:
+      - postgres-data:/var/lib/postgres/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  web:
+    build: .
+    volumes:
+      - media-files:/app/media_files
+      - static-files:/app/static_files
+    ports:
+      - "8000:4444"
+    env_file:
+      - .env.docker
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
