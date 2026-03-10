@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load world_extras %}
+{% load i18n %}
+
+{% block title %}{% trans "Material" %} - {{ block.super }}{% endblock %}
+{% block in_page_title %}{% trans "Material" %}{% endblock %}
+{% block in_page_subtitle %}
+  {% blocktrans %}
+    Weapons, Armour, Foes and more
+  {% endblocktrans %}
+{% endblock %}
+
+{% block opengraph %}
+  {% trans "Material" as og_title %}
+  {% blocktrans asvar og_description %}Weapons, armour, foes, templates, items, and more.{% endblocktrans %}
+  {% include "shared/opengraph.html" with og_title=og_title og_description=og_description %}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+
+    <div class="col-12 col-md-6 mb-4">
+      <a href="{% url "rules:foe_list" %}">
+        <div class="card p-4">
+          <div class="card-body d-flex align-items-center justify-content-center">
+            <i class="fs-1 me-2 gi-cathelineau-polar-bear"></i>
+            <span class="fs-2">{% trans "Foes" %}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-md-6 mb-4">
+      <a href="{% url "rules:template_list" %}">
+        <div class="card p-4">
+          <div class="card-body d-flex align-items-center justify-content-center">
+            <i class="fs-1 me-2 gi-delapouite-book-cover"></i>
+            <span class="fs-2">{% trans "Templates" %}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-md-6 mb-4">
+      <a href="{% url "armory:item_list" %}">
+        <div class="card p-4">
+          <div class="card-body d-flex align-items-center justify-content-center">
+            <i class="fs-1 me-2 gi-delapouite-holy-hand-grenade"></i>
+            <span class="fs-2">{% trans "Items" %}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-md-6 mb-4">
+      <a href="{% url "armory:weapon_list" %}">
+        <div class="card p-4">
+          <div class="card-body d-flex align-items-center justify-content-center">
+            <i class="fs-1 me-2 gi-delapouite-axe-sword"></i>
+            <span class="fs-2">{% trans "Weapons" %}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-md-6 mb-4">
+      <a href="{% url "armory:riot_gear_list" %}">
+        <div class="card p-4">
+          <div class="card-body d-flex align-items-center justify-content-center">
+            <i class="fs-1 me-2 gi-delapouite-viking-helmet"></i>
+            <span class="fs-2">{% trans "Armour" %}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    {% if request.world|world_has_extension:"magic" %}
+      <div class="col-12 col-md-6 mb-4">
+        <a href="{% url "magic:spell_origin_list" %}">
+          <div class="card p-4">
+            <div class="card-body d-flex align-items-center justify-content-center">
+              <i class="fs-1 me-2 gi-lorc-fairy-wand"></i>
+              <span class="fs-2">{% trans "Spells" %}</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endif %}
+
+    {% if request.world|world_has_extension:"body_modifications" %}
+      <div class="col-12 mb-4">
+        <a href="{% url "body_modifications:body_modification_type_list" %}">
+          <div class="card p-4">
+            <div class="card-body d-flex align-items-center justify-content-center">
+              <i class="fs-1 me-2 gi gi-lorc-power-lightning"></i>
+              <span class="fs-2">{% trans "Body Modifications" %}</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock %}
