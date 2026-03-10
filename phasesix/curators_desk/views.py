@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+import re
 from functools import reduce
 from operator import or_
 
@@ -605,11 +606,19 @@ class TranslateHomebrewView(View):
 
     @staticmethod
     def _parse_json_response(text):
+        fenced_match = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
+        if fenced_match:
+            text = fenced_match.group(1)
         start = text.find("{")
         end = text.rfind("}")
         if start == -1 or end == -1 or end <= start:
             raise ValueError("Invalid JSON response")
-        return json.loads(text[start : end + 1])
+        payload = text[start : end + 1]
+        try:
+            return json.loads(payload)
+        except json.JSONDecodeError:
+            cleaned = re.sub(r",\s*([}\]])", r"\1", payload)
+            return json.loads(cleaned)
 
     def post(self, request, *args, **kwargs):
         model_name = request.POST.get("model_name")
