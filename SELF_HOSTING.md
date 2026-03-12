@@ -1,6 +1,6 @@
-# Self-Hosting Guide — Phase Six
+# Self-Hosting Guide — Discretion
 
-Phase Six is a Django-based tabletop RPG platform. This guide covers everything you need to run it yourself, including a few bugs in the default configuration that must be fixed before the stack will work correctly.
+Discretion is a Django-based tabletop RPG platform. This guide covers everything you need to run it yourself, including a few bugs in the default configuration that must be fixed before the stack will work correctly.
 
 ---
 
@@ -41,10 +41,10 @@ ports:
 
 ```dockerfile
 # Change this:
-CMD ["/app/.venv/bin/hypercorn", "-w", "5", "-b", "0.0.0.0:4444", "phasesix.asgi:application"]
+CMD ["/app/.venv/bin/hypercorn", "-w", "5", "-b", "0.0.0.0:4444", "discretion.asgi:application"]
 
 # To this:
-CMD ["/bin/sh", "-c", "/app/migrate.sh && /app/.venv/bin/hypercorn -w 5 -b 0.0.0.0:4444 phasesix.asgi:application"]
+CMD ["/bin/sh", "-c", "/app/migrate.sh && /app/.venv/bin/hypercorn -w 5 -b 0.0.0.0:4444 discretion.asgi:application"]
 ```
 
 ### 3. No healthchecks on dependent services
@@ -101,7 +101,7 @@ services:
 
 ```bash
 git clone <repo-url>
-cd phasesix
+cd discretion
 ```
 
 ### 2. Configure your environment

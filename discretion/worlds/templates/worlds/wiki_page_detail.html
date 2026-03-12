@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load portal_extras %}
+{% load static i18n characters_extras rules_extras thumbnail world_extras campaign_extras %}
+
+{% block title %}{{ object }} - {{ block.super }}{% endblock %}
+{% block in_page_title %}{{ object }}{% endblock %}
+{% block in_page_subtitle %}{{ object.text|to_first_linebreak|replace_wiki_tags:object.world }}{% endblock %}
+
+{% block bottom_nav %}
+  {% bottom_navigation_button "worlds/_navigation.html" %}
+{% endblock %}
+
+{% block opengraph %}
+  {% if object.image %}
+    {% thumbnail object.image '600' as image %}
+      {% include "shared/opengraph.html" with og_title=object og_description=object.text|to_first_linebreak|default:brand_description|striptags|truncatechars:200 og_image_path=image.url %}
+    {% endthumbnail %}
+  {% else %}
+    {% include "shared/opengraph.html" with og_title=object og_description=object.text|to_first_linebreak|default:brand_description|striptags|truncatechars:200 %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div data-app="worlds" class="row">
+    <div class="col-12 col-xl-3 d-none d-xl-block">
+      {% include 'worlds/_navigation.html' with object=object may_edit=may_edit %}
+    </div>
+
+    <div class="col-12 col-xl-9 wiki-page">
+      <nav aria-label="breadcrumbs" style="--bs-breadcrumb-divider: '>';">
+        <ol class="breadcrumb">
+          {% breadcrumbs object as crumbs %}
+          {% for bc in crumbs %}
+            <li class="breadcrumb-item"><a href="{{ bc.1 }}">{{ bc.0 }}</a></li>
+          {% endfor %}
+        </ol>
+      </nav>
+      {% with img=object.get_image %}
+        {% if img %}
+          {% thumbnail img.image '1024' as im %}
+            <a class="d-none d-lg-block toggle-lightbox" href="{{ img.image.url }}" data-gallery="{{ object.slug }}">
+              <img class="rounded img-fluid w-25 float-start me-3 mb-2" src="{{ im.url }}"
+                   alt="{{ object }}"/>
+            </a>
+            <img class="d-lg-none rounded img-fluid me-3 mb-2" src="{{ im.url }}"
+                 alt="{{ object }}"/>
+          {% endthumbnail %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="clearfix">
+
+        {% if object.foe %}
+          <div class="d-lg-none">
+            <button data-bs-toggle="collapse"
+                    data-bs-target="#game-values-collapse"
+                    class="btn btn-outline-primary w-100 my-2">{% trans "Game Values" %}</button>
+            <div class="collapse" id="game-values-collapse">
+              <div class="card">
+                <div class="card-body">
+                  {% include 'rules/_foe_stat_block.html' with foe=object.foe show_description=False %}
+                  {% include 'rules/_foe_actions_block.html' with foe=object.foe %}
+                  {% include 'worlds/_add_to_campaign.html' %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-lg-block float-end ms-3 mb-2" style="width: 35%;">
+            <div class="card">
+              <div class="card-body">
+                {% include 'rules/_foe_stat_block.html' with foe=object.foe show_description=False %}
+                {% include 'rules/_foe_actions_block.html' with foe=object.foe %}
+                {% include 'worlds/_add_to_campaign.html' %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {{ object.text|discretion_markup|replace_wiki_tags:object.world }}
+      </div>
+
+      {% if object.wikipageembedding_set.exists %}
+        {% for embedding in object.wikipageembedding_set.all %}
+
+          {% if embedding.spell_origin %}
+            <h2 class="mt-5">{% trans "Spells" %}</h2>
+            <div class="column-container column-layout-2 mt-4">
+              {% for spell in embedding.spell_origin.basespell_set.all %}
+                {% basespell_widget spell %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if embedding.character %}
+            <h2 class="mt-5">{% trans "Character Sheet" %}</h2>
+            <div class="column-container column-layout-2 mt-4">
+              <div>
+                {% include 'characters/_character_list_widget.html' with character=embedding.character %}
+              </div>
+            </div>
+          {% endif %}
+
+        {% endfor %}
+      {% endif %}
+
+      <div class="column-container column-layout-2 mt-4">
+        {% for page in object.wikipage_set.all %}
+          <div class="card pointer mb-3">
+            <a href="{% url 'world:wiki_page' world_slug=object.world.slug slug=page.slug %}">
+              <div class="card-header no-decoration no-link-colors">
+                {{ page }}
+              </div>
+              {% if page.image %}
+                {% thumbnail page.image "1024" as im %}
+                  <img src="{{ im.url }}" class="card-img-top" alt="{{ page }}">
+                {% endthumbnail %}
+              {% endif %}
+            </a>
+            <div class="card-body">
+              {{ page.text|to_first_linebreak|discretion_markup|replace_wiki_tags:page.world }}
+            </div>
+            {% if user.is_superuser %}
+              <a href="{% url 'admin:worlds_wikipage_change' page.id %}"
+                 style="position: absolute; bottom: 2px; right: 2px; font-size: xx-small">admin</a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

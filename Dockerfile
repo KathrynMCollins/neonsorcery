@@ -43,7 +43,7 @@ WORKDIR /app
 # Copy project files
 COPY --from=builder /app/.venv/ /app/.venv/
 COPY --from=builder /app/uv.lock /app/
-COPY phasesix/ /app/
+COPY discretion/ /app/
 COPY entrypoints/ /app/
 COPY --from=builder /app/git_commit_hash.txt /app/
 
@@ -51,5 +51,5 @@ COPY --from=builder /app/git_commit_hash.txt /app/
 EXPOSE 4444
 
 # Run migrations/static collection then start server
-CMD ["/bin/sh", "-c", "/app/migrate.sh && /app/.venv/bin/hypercorn -w 5 -b 0.0.0.0:4444 phasesix.asgi:application"]
+CMD ["/bin/sh", "-c", "/app/migrate.sh && /app/.venv/bin/hypercorn -w 5 -b 0.0.0.0:4444 discretion.asgi:application"]
 

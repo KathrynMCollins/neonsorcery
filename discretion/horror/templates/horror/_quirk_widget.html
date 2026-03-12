@@ -1,0 +1,42 @@
+{% load i18n %}
+{% load rules_extras %}
+
+<div class="card mb-3">
+  <div class="card-header">
+    {{ quirk }}
+  </div>
+  <div class="card-body">
+    {% include "homebrew/_made_by_label.html" with creator=quirk.created_by extra_class="mb-2" %}
+    <div class="text-muted mb-3">
+      <i>{{ quirk.description|discretion_markup }}</i>
+    </div>
+
+    <div class="mb-3 text-success">
+      {{ quirk.positive_effects|discretion_markup }}
+    </div>
+    <div class="mb-3 text-danger">
+      {{ quirk.negative_effects|discretion_markup }}
+    </div>
+
+    {% modifier_widget quirk.quirkmodifier_set.all %}
+
+    {% if character and add_button %}
+      <form action="{% url 'characters:xhr_character_objects' pk=character.id object_type="quirk" %}"
+            data-fetch-form="true"
+            data-fetch-form-event-after="refresh-fragments"
+            class="float-end" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="object_id" value="{{ quirk.id }}">
+        <button class="btn btn-sm btn-primary float-end"
+                type="submit"
+                data-danger="{% trans 'Not possible' %}"
+                data-success="{% trans 'Added' %}">{% trans 'Add Quirk' %}</button>
+      </form>
+    {% endif %}
+  </div>
+
+  {% if user.is_superuser %}
+    <a href="{% url 'admin:horror_quirk_change' quirk.id %}"
+       style="position: absolute; bottom: 2px; left: 2px; font-size: xx-small">admin</a>
+  {% endif %}
+</div>
