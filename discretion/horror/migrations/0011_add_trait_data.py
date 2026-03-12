@@ -358,20 +358,16 @@ def add_traits(apps, schema_editor):
     QuirkCategory = apps.get_model("horror", "QuirkCategory")
     Quirk = apps.get_model("horror", "Quirk")
 
-    general_cat = QuirkCategory.objects.create(
-        name_de="General Traits",
-        name_en="General Traits",
-    )
-    circumstantial_cat = QuirkCategory.objects.create(
-        name_de="Circumstantial Traits",
-        name_en="Circumstantial Traits",
+    traits_cat = QuirkCategory.objects.create(
+        name_de="Traits",
+        name_en="Traits",
     )
 
     for name, positive_effect, description in GENERAL_TRAITS_POSITIVE:
         Quirk.objects.create(
             name_de=name,
             name_en=name,
-            category=general_cat,
+            category=traits_cat,
             positive_effects_de=positive_effect,
             positive_effects_en=positive_effect,
             description_de=description,
@@ -382,7 +378,7 @@ def add_traits(apps, schema_editor):
         Quirk.objects.create(
             name_de=name,
             name_en=name,
-            category=general_cat,
+            category=traits_cat,
             negative_effects_de=negative_effect,
             negative_effects_en=negative_effect,
             description_de=description,
@@ -393,7 +389,7 @@ def add_traits(apps, schema_editor):
         kwargs = dict(
             name_de=name,
             name_en=name,
-            category=circumstantial_cat,
+            category=traits_cat,
             description_de=condition,
             description_en=condition,
         )
@@ -408,9 +404,7 @@ def add_traits(apps, schema_editor):
 
 def remove_traits(apps, schema_editor):
     QuirkCategory = apps.get_model("horror", "QuirkCategory")
-    QuirkCategory.objects.filter(
-        name_de__in=["General Traits", "Circumstantial Traits"]
-    ).delete()
+    QuirkCategory.objects.filter(name_de="Traits").delete()
 
 
 class Migration(migrations.Migration):
