@@ -83,8 +83,8 @@
         <div class="d-flex justify-content-center flex-wrap">
           {% trans "Most Crits" as roll_text %}
           {% include "portal/_yearly_wrapup_roll_tile.html" with roll=roll_crit_count roll_text=roll_text %}
-          {% trans "Most exploded dice" as roll_text %}
-          {% include "portal/_yearly_wrapup_roll_tile.html" with roll=roll_exploded_dice_count roll_text=roll_text %}
+          {% trans "Most mistakes" as roll_text %}
+          {% include "portal/_yearly_wrapup_roll_tile.html" with roll=roll_mistakes_count roll_text=roll_text %}
           {% trans "Most successes" as roll_text %}
           {% include "portal/_yearly_wrapup_roll_tile.html" with roll=roll_successes_count roll_text=roll_text %}
           {% trans "Highest single roll" as roll_text %}
@@ -156,8 +156,8 @@
         <div class="d-flex justify-content-center flex-wrap">
           {% trans "Most Crits" as roll_text %}
           {% include "portal/_yearly_wrapup_roll_tile.html" with roll=platform_crit_count roll_text=roll_text %}
-          {% trans "Most exploded dice" as roll_text %}
-          {% include "portal/_yearly_wrapup_roll_tile.html" with roll=platform_exploded_dice_count roll_text=roll_text %}
+          {% trans "Most mistakes" as roll_text %}
+          {% include "portal/_yearly_wrapup_roll_tile.html" with roll=platform_mistakes_count roll_text=roll_text %}
           {% trans "Most successes" as roll_text %}
           {% include "portal/_yearly_wrapup_roll_tile.html" with roll=platform_successes_count roll_text=roll_text %}
           {% trans "Highest single roll" as roll_text %}

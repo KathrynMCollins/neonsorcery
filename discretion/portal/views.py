@@ -197,8 +197,8 @@ class YearlyWrapUpView(TemplateView):
         )
         return {
             "platform_crit_count": self.get_highest_roll(qs, "crit_count"),
-            "platform_exploded_dice_count": self.get_highest_roll(
-                qs, "exploded_dice_count"
+            "platform_mistakes_count": self.get_highest_roll(
+                qs, "mistakes_count"
             ),
             "platform_successes_count": self.get_highest_roll(qs, "successes_count"),
             "platform_fails_count": self.get_highest_roll(qs, "fails_count"),
@@ -228,8 +228,8 @@ class YearlyWrapUpView(TemplateView):
             "most_played": self.get_most_played(qs),
             "played_campaigns": self.get_played_campaigns(qs),
             "roll_crit_count": self.get_highest_roll(qs, "crit_count"),
-            "roll_exploded_dice_count": self.get_highest_roll(
-                qs, "exploded_dice_count"
+            "roll_mistakes_count": self.get_highest_roll(
+                qs, "mistakes_count"
             ),
             "roll_successes_count": self.get_highest_roll(qs, "successes_count"),
             "roll_fails_count": self.get_highest_roll(qs, "fails_count"),
