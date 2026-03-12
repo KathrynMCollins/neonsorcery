@@ -373,8 +373,8 @@ class Roll(models.Model):
     # statistics
     crit_count = models.IntegerField(_("crit count"), default=0)
     crit_sum = models.IntegerField(_("crit sum"), default=0)
-    exploded_dice_count = models.IntegerField(_("exploded dice count"), default=0)
-    exploded_dice_sum = models.IntegerField(_("exploded dice sum"), default=0)
+    mistakes_count = models.IntegerField(_("mistakes count"), default=0)
+    complete_fumble = models.BooleanField(_("complete fumble"), default=False)
     highest_single_roll = models.IntegerField(_("highest single roll"), default=0)
     successes_count = models.IntegerField(_("successes count"), default=0)
     successes_sum = models.IntegerField(_("successes sum"), default=0)
@@ -389,13 +389,13 @@ class Roll(models.Model):
         dice_list = [int(v) for v in self.results_csv.strip().split(",") if v]
         successes = [v for v in dice_list if v >= self.minimum_roll]
         fails = [v for v in dice_list if v < self.minimum_roll]
-        exploded = [v for v in dice_list if v >= 6]
+        mistakes = [v for v in dice_list if v == 1]
         crits = [v for v in dice_list if v >= 11]
 
         self.crit_count = len(crits)
         self.crit_sum = sum(crits)
-        self.exploded_dice_count = len(exploded)
-        self.exploded_dice_sum = sum(exploded)
+        self.mistakes_count = len(mistakes)
+        self.complete_fumble = len(mistakes) > len(successes)
         self.highest_single_roll = max(dice_list, default=0)
         self.successes_count = len(successes)
         self.successes_sum = sum(successes)
