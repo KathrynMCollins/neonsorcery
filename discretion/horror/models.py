@@ -56,6 +56,13 @@ class Quirk(HomebrewModel, DiscretionModel, metaclass=TransMeta):
     positive_effects = models.TextField(_("positive effects"), blank=True, null=True)
     negative_effects = models.TextField(_("negative effects"), blank=True, null=True)
     description = models.TextField(_("description"), blank=True, null=True)
+    custom_trait_effect = models.ForeignKey(
+        "horror.CustomTraitEffect",
+        verbose_name=_("custom trait effect"),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         ordering = ("id",)
@@ -79,3 +86,17 @@ class Quirk(HomebrewModel, DiscretionModel, metaclass=TransMeta):
 
 class QuirkModifier(ModifierBase):
     quirk = models.ForeignKey(Quirk, verbose_name=_("quirk"), on_delete=models.CASCADE)
+
+
+class CustomTraitEffect(models.Model):
+    description = models.CharField(_("description"), max_length=200)
+    xp_cost = models.IntegerField(_("xp cost"))
+
+    class Meta:
+        ordering = ("xp_cost",)
+        verbose_name = _("custom trait effect")
+        verbose_name_plural = _("custom trait effects")
+
+    def __str__(self):
+        sign = "+" if self.xp_cost > 0 else ""
+        return f"{self.description} (XP: {sign}{self.xp_cost})"
