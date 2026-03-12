@@ -1,6 +1,6 @@
 {
   "include": [
-    "phasesix/"
+    "discretion/"
   ],
   "exclude": [
     "**/node_modules",
@@ -15,7 +15,7 @@
     {
       "root": ".",
       "extraPaths": [
-        "phasesix"
+        "discretion"
       ]
     }
   ],

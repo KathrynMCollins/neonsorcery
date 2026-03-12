@@ -1,8 +1,8 @@
-## Phase Six Pen'n'Paper Roleplay Platform
+## Discretion Pen'n'Paper Roleplay Platform
 
-This repository contains the source code which runs the RPG Sites [Phase Six](https://phasesix.org/) and [Realms of Tirakan](https://tirakans-reiche.de/). This is a [Django](https://www.djangoproject.com/) project.
+This repository contains the source code which runs the RPG Sites [Discretion](https://discretion.org/) and [Realms of Tirakan](https://tirakans-reiche.de/). This is a [Django](https://www.djangoproject.com/) project.
 
-The code is licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) as stated in the LICENSE.txt file. However, the text content of both phasesix.org and tirakans-reiche.de (game elements, rules etc.) is licensed under the [CC-BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+The code is licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) as stated in the LICENSE.txt file. However, the text content of both discretion.org and tirakans-reiche.de (game elements, rules etc.) is licensed under the [CC-BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 This source code comes with a minimal example set of demo data, which can be inserted into a database to get started.
 
@@ -27,11 +27,11 @@ You need a Linux (WSL2 works too), macOS (untested) or Windows (untested) machin
 
 #### Redis
 
-Phase Six relies on a local [redis](https://redis.io/) server. The installation depends on your system. For linux, use your package manager (i.e. `apt install redis-server`). On macOS, use Homebrew to `brew install redis`.
+Discretion relies on a local [redis](https://redis.io/) server. The installation depends on your system. For linux, use your package manager (i.e. `apt install redis-server`). On macOS, use Homebrew to `brew install redis`.
 
 #### Python and uv
 
-The supported python versions are 3.10-3.13. A system-wide installed python interpreter is fine, but you want to create a virtualenv. PhaseSix uses `uv` for requirements. This can be done with:
+The supported python versions are 3.10-3.13. A system-wide installed python interpreter is fine, but you want to create a virtualenv. Discretion uses `uv` for requirements. This can be done with:
 
 ```shell
 $ uv sync

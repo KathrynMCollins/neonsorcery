@@ -7,7 +7,7 @@
 - [ ] "Buttons" mit 2x height/width in btn btn-circle
 - [ ] Status effects info icon
 
-- [x] Rüstungen z.B. sind fast leer auf phasesix.org (erweiterung=None)
+- [x] Rüstungen z.B. sind fast leer auf discretion.org (erweiterung=None)
 - [x] sidebar modals: sidebar schliessen wenn modal geöffnet wird
 - [x] protection sidebar: verbrauchte schilde anzeigen und restore ermöglichen
 - [x] Waffen auf der Seite haben keine Preise
