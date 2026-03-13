@@ -20,15 +20,13 @@ CHARACTER_ASPECT_CHOICES = (
     ("base_languages", _("languages")),
     ("base_contacts", _("contacts")),
     ("base_max_health", _("max health")),
-    ("base_max_arcana", _("max arcana")),
-    ("base_spell_points", _("spell points")),
+    ("base_max_arcana", _("available mana")),
+    ("base_spell_points", _("available mana")),
     ("base_actions", _("actions")),
-    ("base_minimum_roll", _("minimum roll")),
-    ("base_rest_minimum_roll", _("rest minimum roll")),
-    ("base_protection", _("protection")),
-    ("base_evasion", _("evasion")),
-    ("base_bonus_dice", _("bonus dice")),
-    ("base_destiny_dice", _("destiny dice")),
+    ("base_protection", _("physical defense")),
+    ("base_evasion", _("physical defense")),
+    ("base_bonus_dice", _("savvy dice")),
+    ("base_destiny_dice", _("savvy dice")),
     ("base_rerolls", _("rerolls")),
     ("base_base_stress", _("base stress")),
     ("base_max_stress", _("max stress")),
@@ -365,25 +363,24 @@ class Lineage(DiscretionModel, metaclass=TransMeta):
     base_languages = models.IntegerField(_("languages"), default=0)
     base_contacts = models.IntegerField(_("contacts"), default=0)
 
-    base_max_health = models.IntegerField(_("max health"), default=6)
+    base_max_health = models.IntegerField(_("max health"), default=8)
 
-    base_max_arcana = models.IntegerField(_("max arcana"), default=0)
-    base_spell_points = models.IntegerField(_("spell points"), default=0)
+    base_max_arcana = models.IntegerField(_("available mana"), default=0)
+    base_spell_points = models.IntegerField(_("available mana"), default=0)
 
-    base_actions = models.IntegerField(_("base actions"), default=2)
-    base_minimum_roll = models.IntegerField(_("base minimum roll"), default=5)
+    base_actions = models.IntegerField(_("base actions"), default=3)
 
-    base_bonus_dice = models.IntegerField(_("base bonus dice"), default=0)
-    base_destiny_dice = models.IntegerField(_("base destiny dice"), default=0)
+    base_bonus_dice = models.IntegerField(_("base savvy dice"), default=0)
+    base_destiny_dice = models.IntegerField(_("base savvy dice"), default=0)
     base_rerolls = models.IntegerField(_("base rerolls"), default=0)
 
     # Base Values
-    base_evasion = models.IntegerField(_("base evasion"), default=0)
-    base_protection = models.IntegerField(_("base armor"), default=0)
+    base_evasion = models.IntegerField(_("base physical defense"), default=0)
+    base_protection = models.IntegerField(_("base physical defense"), default=0)
 
     # horror
     base_base_stress = models.IntegerField(_("max stress"), default=0)  # Yes, base_base
-    base_max_stress = models.IntegerField(_("max stress"), default=10)
+    base_max_stress = models.IntegerField(_("max stress"), default=8)
     template_points = models.IntegerField(_("template points"), default=20)
 
     # Body Modifications
@@ -407,9 +404,15 @@ class Lineage(DiscretionModel, metaclass=TransMeta):
 
 class Attribute(models.Model, metaclass=TransMeta):
     KIND_CHOICES = (
-        ("per", _("persona")),
-        ("phy", _("physis")),
+        ("phy", _("physical")),
+        ("men", _("mental")),
     )
+
+    # Game rules: all attributes follow these constraints
+    DEFAULT_VALUE = 1
+    CREATION_MAX = 5
+    ABSOLUTE_MAX = 12
+
     name = models.CharField(_("name"), max_length=120)
     identifier = models.CharField(_("identifier"), max_length=120)
     description = models.TextField(_("description"), blank=True, null=True)
