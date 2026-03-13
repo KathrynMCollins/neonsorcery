@@ -123,7 +123,7 @@ class Campaign(ModelWithImage):
     )
     forbidden_templates = models.ManyToManyField("rules.Template", blank=True)
     starting_template_points = models.IntegerField(
-        _("additional starting career points"), default=0
+        _("additional starting career points"), default=12
     )
 
     # Integrations
@@ -155,7 +155,7 @@ class Campaign(ModelWithImage):
     )
 
     currency_map = models.ForeignKey("armory.CurrencyMap", on_delete=models.CASCADE)
-    seed_money = models.IntegerField(_("seed money"), default=2000)
+    seed_money = models.IntegerField(_("starting fortune"), default=2000)
 
     foe_visibility = models.CharField(
         _("foe visibility"), max_length=1, default="A", choices=VISIBILITY_CHOICES
@@ -368,11 +368,8 @@ class Roll(models.Model):
     results_csv = models.CharField(_("results_csv"), max_length=120)
 
     modifier = models.IntegerField(_("modifier"), default=0)
-    minimum_roll = models.IntegerField(_("minimum roll"), default=5)
 
     # statistics
-    crit_count = models.IntegerField(_("crit count"), default=0)
-    crit_sum = models.IntegerField(_("crit sum"), default=0)
     mistakes_count = models.IntegerField(_("mistakes count"), default=0)
     complete_fumble = models.BooleanField(_("complete fumble"), default=False)
     highest_single_roll = models.IntegerField(_("highest single roll"), default=0)
@@ -387,13 +384,10 @@ class Roll(models.Model):
 
     def save(self, *args, **kwargs):
         dice_list = [int(v) for v in self.results_csv.strip().split(",") if v]
-        successes = [v for v in dice_list if v >= self.minimum_roll]
-        fails = [v for v in dice_list if v < self.minimum_roll]
+        successes = [v for v in dice_list if v >= 5]
+        fails = [v for v in dice_list if v < 5]
         mistakes = [v for v in dice_list if v == 1]
-        crits = [v for v in dice_list if v >= 11]
 
-        self.crit_count = len(crits)
-        self.crit_sum = sum(crits)
         self.mistakes_count = len(mistakes)
         self.complete_fumble = len(mistakes) > len(successes)
         self.highest_single_roll = max(dice_list, default=0)
