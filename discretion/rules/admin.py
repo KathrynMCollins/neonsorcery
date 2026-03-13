@@ -78,7 +78,7 @@ class TemplateAdmin(ModelAdmin):
 
 @admin.register(Attribute)
 class AttributeAdmin(ModelAdmin):
-    list_display = ("name_de", "name_en", "kind")
+    list_display = ("name_de", "name_en", "identifier", "kind")
     list_editable = ("kind",)
 
 

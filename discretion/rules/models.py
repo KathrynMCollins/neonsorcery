@@ -404,9 +404,15 @@ class Lineage(DiscretionModel, metaclass=TransMeta):
 
 class Attribute(models.Model, metaclass=TransMeta):
     KIND_CHOICES = (
-        ("per", _("persona")),
-        ("phy", _("physis")),
+        ("phy", _("physical")),
+        ("men", _("mental")),
     )
+
+    # Game rules: all attributes follow these constraints
+    DEFAULT_VALUE = 1
+    CREATION_MAX = 5
+    ABSOLUTE_MAX = 12
+
     name = models.CharField(_("name"), max_length=120)
     identifier = models.CharField(_("identifier"), max_length=120)
     description = models.TextField(_("description"), blank=True, null=True)
